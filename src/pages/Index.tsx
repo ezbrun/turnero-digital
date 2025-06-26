@@ -1,14 +1,153 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Users, UserPlus, ArrowLeft } from 'lucide-react';
+import SolicitarTurno from '@/components/SolicitarTurno';
+import AdministrarTurnos from '@/components/AdministrarTurnos';
+import { useTurnos } from '@/hooks/useTurnos';
+
+type Vista = 'inicio' | 'solicitar' | 'administrar';
 
 const Index = () => {
-  return (
-    <div className="min-h-screen flex items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+  const [vistaActual, setVistaActual] = useState<Vista>('inicio');
+  const {
+    turnos,
+    turnosPendientes,
+    turnosEnCurso,
+    turnosCompletados,
+    agregarTurno,
+    cambiarEstadoTurno,
+    eliminarTurno
+  } = useTurnos();
+
+  const VistaPrincipal = () => (
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
+      <div className="max-w-4xl w-full">
+        <div className="text-center mb-8">
+          <h1 className="text-5xl font-bold text-gray-800 mb-4">Sistema de Turnos</h1>
+          <p className="text-xl text-gray-600">
+            Gestiona tus citas de manera eficiente y organizada
+          </p>
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-blue-200 hover:border-blue-300">
+            <CardHeader className="text-center pb-4">
+              <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                <UserPlus className="h-8 w-8 text-blue-600" />
+              </div>
+              <CardTitle className="text-blue-800">Solicitar Turno</CardTitle>
+              <CardDescription>
+                Reserva tu cita de forma rápida y sencilla
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700"
+                onClick={() => setVistaActual('solicitar')}
+              >
+                Solicitar Turno
+              </Button>
+            </CardContent>
+          </Card>
+
+          <Card className="hover:shadow-lg transition-shadow cursor-pointer border-green-200 hover:border-green-300">
+            <CardHeader className="text-center pb-4">
+              <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                <Users className="h-8 w-8 text-green-600" />
+              </div>
+              <CardTitle className="text-green-800">Administrar Turnos</CardTitle>
+              <CardDescription>
+                Gestiona y organiza todos los turnos pendientes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Button 
+                className="w-full bg-green-600 hover:bg-green-700"
+                onClick={() => setVistaActual('administrar')}
+              >
+                Ver Turnos ({turnos.length})
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+
+        {turnos.length > 0 && (
+          <div className="mt-8 text-center">
+            <div className="inline-flex items-center gap-4 bg-white rounded-lg p-4 shadow-sm">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-yellow-600">{turnosPendientes.length}</div>
+                <div className="text-sm text-gray-600">Pendientes</div>
+              </div>
+              <div className="h-8 w-px bg-gray-300"></div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-blue-600">{turnosEnCurso.length}</div>
+                <div className="text-sm text-gray-600">En Curso</div>
+              </div>
+              <div className="h-8 w-px bg-gray-300"></div>
+              <div className="text-center">
+                <div className="text-2xl font-bold text-green-600">{turnosCompletados.length}</div>
+                <div className="text-sm text-gray-600">Completados</div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
+
+  const BotonVolver = () => (
+    <div className="absolute top-6 left-6">
+      <Button
+        variant="outline"
+        onClick={() => setVistaActual('inicio')}
+        className="flex items-center gap-2"
+      >
+        <ArrowLeft className="h-4 w-4" />
+        Volver
+      </Button>
+    </div>
+  );
+
+  if (vistaActual === 'solicitar') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-4 relative">
+        <BotonVolver />
+        <div className="pt-16">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-blue-800 mb-2">Solicitar Turno</h1>
+            <p className="text-gray-600">Completa el formulario para reservar tu cita</p>
+          </div>
+          <SolicitarTurno onSolicitar={agregarTurno} />
+        </div>
+      </div>
+    );
+  }
+
+  if (vistaActual === 'administrar') {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-4 relative">
+        <BotonVolver />
+        <div className="pt-16">
+          <div className="text-center mb-8">
+            <h1 className="text-4xl font-bold text-green-800 mb-2">Administrar Turnos</h1>
+            <p className="text-gray-600">Gestiona todos los turnos del sistema</p>
+          </div>
+          <AdministrarTurnos
+            turnos={turnos}
+            turnosPendientes={turnosPendientes}
+            turnosEnCurso={turnosEnCurso}
+            turnosCompletados={turnosCompletados}
+            onCambiarEstado={cambiarEstadoTurno}
+            onEliminar={eliminarTurno}
+          />
+        </div>
+      </div>
+    );
+  }
+
+  return <VistaPrincipal />;
 };
 
 export default Index;
