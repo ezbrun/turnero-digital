@@ -1,16 +1,18 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserPlus, ArrowLeft } from 'lucide-react';
+import { Users, UserPlus, ArrowLeft, LogOut } from 'lucide-react';
 import SolicitarTurno from '@/components/SolicitarTurno';
 import AdministrarTurnos from '@/components/AdministrarTurnos';
+import AdminLogin from '@/components/AdminLogin';
 import { useTurnos } from '@/hooks/useTurnos';
+import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 type Vista = 'inicio' | 'solicitar' | 'administrar';
 
 const Index = () => {
   const [vistaActual, setVistaActual] = useState<Vista>('inicio');
+  const { isAuthenticated, login, logout } = useAdminAuth();
   const {
     turnos,
     turnosPendientes,
@@ -126,9 +128,25 @@ const Index = () => {
   }
 
   if (vistaActual === 'administrar') {
+    // Si no está autenticado, mostrar login
+    if (!isAuthenticated) {
+      return <AdminLogin onLogin={login} />;
+    }
+
+    // Si está autenticado, mostrar la administración
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 p-4 relative">
         <BotonVolver />
+        <div className="absolute top-6 right-6">
+          <Button
+            variant="outline"
+            onClick={logout}
+            className="flex items-center gap-2 border-red-200 text-red-600 hover:bg-red-50"
+          >
+            <LogOut className="h-4 w-4" />
+            Cerrar Sesión
+          </Button>
+        </div>
         <div className="pt-16">
           <div className="text-center mb-8">
             <h1 className="text-4xl font-bold text-green-800 mb-2">Administrar Turnos</h1>
