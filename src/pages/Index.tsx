@@ -1,11 +1,12 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, UserPlus, ArrowLeft, LogOut } from 'lucide-react';
+import { Users, UserPlus, ArrowLeft, LogOut, RefreshCw } from 'lucide-react';
 import SolicitarTurno from '@/components/SolicitarTurno';
 import AdministrarTurnos from '@/components/AdministrarTurnos';
 import AdminLogin from '@/components/AdminLogin';
-import { useTurnos } from '@/hooks/useTurnos';
+import { useSupabaseTurnos } from '@/hooks/useSupabaseTurnos';
 import { useAdminAuth } from '@/hooks/useAdminAuth';
 
 type Vista = 'inicio' | 'solicitar' | 'administrar';
@@ -18,10 +19,12 @@ const Index = () => {
     turnosPendientes,
     turnosEnCurso,
     turnosCompletados,
+    loading,
     agregarTurno,
     cambiarEstadoTurno,
-    eliminarTurno
-  } = useTurnos();
+    eliminarTurno,
+    recargarTurnos
+  } = useSupabaseTurnos();
 
   const VistaPrincipal = () => (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
@@ -31,6 +34,18 @@ const Index = () => {
           <p className="text-xl text-gray-600">
             Gestiona tus citas de manera eficiente y organizada
           </p>
+          <div className="mt-4 flex justify-center">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={recargarTurnos}
+              disabled={loading}
+              className="flex items-center gap-2"
+            >
+              <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              {loading ? 'Cargando...' : 'Actualizar'}
+            </Button>
+          </div>
         </div>
 
         <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
@@ -69,13 +84,13 @@ const Index = () => {
                 className="w-full bg-green-600 hover:bg-green-700"
                 onClick={() => setVistaActual('administrar')}
               >
-                Ver Turnos ({turnos.length})
+                Ver Turnos ({loading ? '...' : turnos.length})
               </Button>
             </CardContent>
           </Card>
         </div>
 
-        {turnos.length > 0 && (
+        {!loading && turnos.length > 0 && (
           <div className="mt-8 text-center">
             <div className="inline-flex items-center gap-4 bg-white rounded-lg p-4 shadow-sm">
               <div className="text-center">
