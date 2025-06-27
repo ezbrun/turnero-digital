@@ -26,6 +26,11 @@ const Index = () => {
     recargarTurnos
   } = useSupabaseTurnos();
 
+  // Wrapper para hacer que agregarTurno sea compatible con SolicitarTurno
+  const handleAgregarTurno = async (nombre: string, comentario: string): Promise<number> => {
+    return await agregarTurno(nombre, comentario);
+  };
+
   const VistaPrincipal = () => (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-green-50 flex items-center justify-center p-4">
       <div className="max-w-4xl w-full">
@@ -136,7 +141,7 @@ const Index = () => {
             <h1 className="text-4xl font-bold text-blue-800 mb-2">Solicitar Turno</h1>
             <p className="text-gray-600">Completa el formulario para reservar tu cita</p>
           </div>
-          <SolicitarTurno onSolicitar={agregarTurno} />
+          <SolicitarTurno onSolicitar={handleAgregarTurno} />
         </div>
       </div>
     );

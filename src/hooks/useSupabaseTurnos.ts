@@ -1,7 +1,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
-import { Turno, TurnoInsertar } from '@/types/turno';
+import { Turno, TurnoInsertar, EstadoTurno } from '@/types/turno';
 
 export const useSupabaseTurnos = () => {
   const [turnos, setTurnos] = useState<Turno[]>([]);
@@ -21,10 +21,11 @@ export const useSupabaseTurnos = () => {
         return;
       }
 
-      // Convertir las fechas de string a Date
+      // Convertir las fechas de string a Date y asegurar tipos correctos
       const turnosConFechas = (data || []).map(turno => ({
         ...turno,
-        fecha_creacion: new Date(turno.fecha_creacion)
+        fecha_creacion: new Date(turno.fecha_creacion),
+        estado: turno.estado as EstadoTurno
       }));
 
       setTurnos(turnosConFechas);
@@ -87,7 +88,7 @@ export const useSupabaseTurnos = () => {
     }
   }, [obtenerProximoNumero, cargarTurnos]);
 
-  const cambiarEstadoTurno = useCallback(async (id: string, nuevoEstado: Turno['estado']) => {
+  const cambiarEstadoTurno = useCallback(async (id: string, nuevoEstado: EstadoTurno) => {
     try {
       const { error } = await supabase
         .from('turnos')

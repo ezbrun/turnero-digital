@@ -50,7 +50,7 @@ const AdministrarTurnos = ({
               <div className="text-2xl font-bold text-blue-600">#{turno.numero}</div>
               {getEstadoBadge(turno.estado)}
               <span className="text-sm text-gray-500">
-                {formatearFecha(turno.fechaCreacion)}
+                {formatearFecha(turno.fecha_creacion)}
               </span>
             </div>
             <h4 className="font-semibold text-gray-800 mb-1">{turno.nombre}</h4>
