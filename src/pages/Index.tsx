@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -27,8 +26,9 @@ const Index = () => {
   } = useSupabaseTurnos();
 
   // Wrapper para hacer que agregarTurno sea compatible con SolicitarTurno
-  const handleAgregarTurno = async (nombre: string, comentario: string): Promise<number> => {
-    return await agregarTurno(nombre, comentario);
+  const handleAgregarTurno = (nombre: string, comentario: string): number => {
+    agregarTurno(nombre, comentario);
+    return 0; // Retornamos 0 como placeholder, el número real se asigna en el backend
   };
 
   const VistaPrincipal = () => (

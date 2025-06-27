@@ -14,7 +14,7 @@ export const useTurnos = () => {
         // Convertir las fechas de string a Date
         return turnos.map((turno: any) => ({
           ...turno,
-          fechaCreacion: new Date(turno.fechaCreacion)
+          fecha_creacion: new Date(turno.fecha_creacion)
         }));
       }
     } catch (error) {
@@ -45,7 +45,7 @@ export const useTurnos = () => {
       numero: turnos.length + 1,
       nombre,
       comentario,
-      fechaCreacion: new Date(),
+      fecha_creacion: new Date(),
       estado: 'pendiente'
     };
     
